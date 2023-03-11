@@ -2,7 +2,7 @@ import os
 from duckduckgo_search import ddg_images
 from fastcore.all import *
 from fastdownload import download_url
-from fastai.vision.all import * 
+from fastai.vision.all import *
 from setup_logger import logger
 from time import sleep
 
@@ -15,7 +15,7 @@ class ImageClassifier:
 
     def search_images(self, term, max_images=30):
         logger.info(f'Searching for "{term}"')
-        return L(ddg_images(term, max_results=max_images)).itemgot('image')
+        return L(ddg_images(term, max_results=max_images)).itemgot("image")
 
 
 if __name__ == "__main__":

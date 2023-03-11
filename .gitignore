@@ -1,2 +1,3 @@
 lecture1/classifier*/
+**/__pycache__/
 *.pyc
