@@ -1,24 +1,38 @@
-import os
-from duckduckgo_search import ddg_images
-from fastcore.all import *
-from fastdownload import download_url
+#import os
+#from fastcore.all import *
 from fastai.vision.all import *
-from setup_logger import logger
-from time import sleep
+from image_downloader import ImageDownloader
 
 
 class ImageClassifier:
-    def __init__(self, image_categories, *args, **kwargs):
+    def __init__(self, image_categories, download=True, **kwargs):
         self.image_categories = image_categories
-        self.args = args
-        self.kwargs = kwargs
+        if download == True:
+            [ImageDownloader(image, **kwargs).download_images() for image in image_categories]
 
-    def search_images(self, term, max_images=30):
-        logger.info(f'Searching for "{term}"')
-        return L(ddg_images(term, max_results=max_images)).itemgot("image")
+    def learn(self, dls, n_epochs=3, pretrained=resnet18, metrics=error_rate):
+        learn = vision_learner(dls, pretrained, metrics)
+        learn.fine_tune(n_epochs)
+        self.learn = learn
+        return learn
+    
 
 
 if __name__ == "__main__":
     image_categories = ["footbal", "baseball"]
-    path = Path("classifier")
-    ImageClassifier(image_categories)
+    path_folder = "classifier_sports"
+    n_epochs = 6
+    bs = 32
+    pretrained = resnet18
+
+
+    ic = ImageClassifier(image_categories,  download=True, path_folder=path_folder)
+    dls = DataBlock(
+        blocks=(ImageBlock, CategoryBlock),
+        get_items=get_image_files,
+        splitter=RandomSplitter(valid_pct=0.2, seed=42),
+        get_y=parent_label,
+        item_tfms=[Resize(192, method='squish')]
+    ).dataloaders(Path(path_folder), bs=bs)
+    learn  = ic.learn(dls=dls, n_epochs=n_epochs, pretrained=pretrained)
+    
