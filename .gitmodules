@@ -1,0 +1,6 @@
+[submodule "lecture1/--force"]
+	path = lecture1/--force
+	url = https://huggingface.co/spaces/imMoya/sports_classifier
+[submodule "lecture1/sports_images"]
+	path = lecture1/sports_images
+	url = https://huggingface.co/spaces/imMoya/sports_images
